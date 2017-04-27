@@ -7,7 +7,7 @@
   <title>控制界面测试2</title>
   <script type="text/javascript" src="static/js/eventemitter2.min.js"></script>
   <script type="text/javascript" src="static/js/roslib.min.js"></script>
-  <script type="text/javascript" src="static/js/webros_turtlebot2.js"></script>
+  <script type="text/javascript" src="static/js/webros_turtlebot20.js"></script>
 
 </head>
 
@@ -128,23 +128,23 @@
           </div>
         </div>
 
-        <div class="ui center aligned container segment" onmouseup='stopTimer()'>
+        <div class="ui center aligned container segment" onmouseup="buttonControl('stop')">
           <h4 class="ui left aligned dividing header">手动遥控</h4>
               <div class="ui basic center aligned segment">
                 <div class="ui basic segment">
-                  <button class="huge circular ui icon button" onmousedown="startTimer('forward')">
+                  <button class="huge circular ui icon button" onmousedown="buttonControl('forward')">
                     <i class="toggle up icon"></i>
                   </button>
                 </div>
 
                 <div class="ui basic segment">
-                  <button class="huge circular ui icon button left_right" onmousedown="startTimer('left')">
+                  <button class="huge circular ui icon button left_right" onmousedown="buttonControl('left')">
                     <i class="undo icon"></i>
                   </button>
-                  <button class="huge circular ui icon button" onmousedown="startTimer('backward')">
+                  <button class="huge circular ui icon button" onmousedown="buttonControl('backward')">
                     <i class="toggle down icon"></i>
                   </button>
-                  <button class="huge circular ui icon button left_right" onmousedown="startTimer('right')">
+                  <button class="huge circular ui icon button left_right" onmousedown="buttonControl('right')">
                     <i class="repeat icon"></i>
                   </button>
                 </div>
