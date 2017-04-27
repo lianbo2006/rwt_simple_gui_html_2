@@ -183,7 +183,7 @@ function buttonControl(code) {
     cmdPub();
   }
 
-  //定义遥控停止函数
+  //定义停止函数
   function stopRobot() {
     if (vx == 0 && vz == 0) {
     instantStopRobot();
