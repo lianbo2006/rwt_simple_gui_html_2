@@ -1,81 +1,63 @@
-// // 设定相关端口信息
-// var rosbridgePort = "9090";
-// var videoPort = "8080";
-//
-// // 分别定义服务的主机变量
-// var rosbridgeHost  = "localhost";
-// var videoHost  = "localhost";
-//
-// // 设定rosbridge_server信息
-// var rbServer = new ROSLIB.Ros({
-//     url : 'ws://' + rosbridgeHost + ':' + rosbridgePort
-//  });
-//
-//  // 设置web_video_server相关参数
-//  var src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/usb_cam/image_raw&quality=50&width=200&height=160";
-//  var src_site2 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/depth/image_raw";
- var src_site3="static/images/blackback.jpg";
- var vidShow='停止';
+// 定义初始化函数
+function init() {
+ // 读取页面相关端口信息
+  rosbridgePort = document.getElementById('rosbridgePort').value;
+  videoPort = document.getElementById('videoPort').value;
 
- // 定义初始化函数
- function init() {
-   // 读取相关端口信息
-    rosbridgePort = document.getElementById('rosbridgePort').value;
-    videoPort = document.getElementById('videoPort').value;
+ // 读取服务的主机变量
+  rosbridgeHost  = document.getElementById('rosbridgeHost').value;
+  videoHost  = document.getElementById('videoHost').value;
 
-   // 读取服务的主机变量
-    rosbridgeHost  = document.getElementById('rosbridgeHost').value;
-    videoHost  = document.getElementById('videoHost').value;
+ // 修改rosbridge_server信息
+  rbServer = new ROSLIB.Ros({
+     url : 'ws://' + rosbridgeHost + ':' + rosbridgePort
+  });
 
-   // 修改rosbridge_server信息
-    rbServer = new ROSLIB.Ros({
-       url : 'ws://' + rosbridgeHost + ':' + rosbridgePort
-    });
-
-   // 连接rosbridge_server并返回信息进行显示
-    rbServer.on('connection', function() {
-       alert("websocket 服务器已连接");
-       console.log('Connected to websocket server.');
+ // 连接rosbridge_server并返回信息进行显示
+  rbServer.on('connection', function() {
+     alert("websocket 服务器已连接");
+     console.log('Connected to websocket server.');
+ });
+  rbServer.on('error', function(error) {
+      alert("连接 websocket 服务器错误");
+      console.log('Error connecting to websocket server: ', error);
+  });
+  rbServer.on('close', function() {
+      alert("websocket 服务器已关闭");
+      console.log('Connection to websocket server closed.');
    });
-    rbServer.on('error', function(error) {
-        alert("连接 websocket 服务器错误");
-        console.log('Error connecting to websocket server: ', error);
-    });
-    rbServer.on('close', function() {
-        alert("websocket 服务器已关闭");
-        console.log('Connection to websocket server closed.');
-     });
 
      // 修改web_video_server相关参数
      //  src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/usb_cam/image_raw&quality=50&width=200&height=160";
      src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/rgb/image_raw&quality=90&width=480&height=320";
      src_site2 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/depth/image_raw";
+     src_site3 = "static/images/blackback.jpg";
      video_raw = document.getElementById("cam_raw");
+     vidShow='停止';
      video_raw.src=src_site3;
 
-     // 创建rostopic,设定主节点，消息名和消息类型
+     // 创建控制rostopic变量,设定主节点，消息名和消息类型
      cmdVelTopic = new ROSLIB.Topic({
          ros : rbServer,
          name : '/cmd_vel_mux/input/teleop',
          messageType : 'geometry_msgs/Twist'
      })
 
-     //速度消息订阅
+     // 创建速度rostopic变量,设定主节点，消息名和消息类型
      velocity_listener = new ROSLIB.Topic({
        ros : rbServer,
        name : '/mobile_base/commands/velocity',
        messageType : 'geometry_msgs/Twist'
      })
      velocity_listener.subscribe(function(message) {
-       console.log('Received message on ' + velocity_listener.name + ': linear.x=' + message.linear.x);
-       console.log('Received message on ' + velocity_listener.name + ': angular.z= ' + message.angular.z);
-       var vxText=document.getElementById('vxText');
-       var vztext=document.getElementById('vzText');
+      // // 在浏览器的开发者栏监控速度信息
+      //  console.log('Received message on ' + velocity_listener.name + ': linear.x=' + message.linear.x);
+      //  console.log('Received message on ' + velocity_listener.name + ': angular.z= ' + message.angular.z);
+       var vxText = document.getElementById('vxText');
+       var vztext = document.getElementById('vzText');
        //传给页面相应位置并且保留两位小数
-       vxReal=message.linear.x;
-       vzReal=message.angular.z;
-       vxText.value=vxReal.toFixed(2);
-       vztext.value=vzReal.toFixed(2);
+       vxText.value = message.linear.x.toFixed(2);
+       vztext.value = message.angular.z.toFixed(2);
        //velocity_listener.unsubscribe();
      })
 
@@ -83,13 +65,10 @@
      directionTimer();
    }
 
-
-
-
 // 定义视频显示函数
 function playPause(){
   var video_raw = document.getElementById("cam_raw");
-  if (vidShow == '停止'){
+  if (vidShow == '停止') {
     vidShow = '彩色';
     video_raw.src = src_site1;
   }
@@ -113,10 +92,6 @@ function playPause(){
 var t1;
 var t2;
 var t3;
-var c = 0;
-
-// // 测试用变量
-// var count=0;
 
 // 定义线速度x与角速度y以及它们的阈值
 var vx = 0;
@@ -151,10 +126,6 @@ function cmdPub(){
 
 //　定义速度设定函数，通过code判断按键
 function setSpeed(code) {
-  // var vxText = 0 + Number(document.getElementById('vxText').value);
-  // var vzText = 0 + Number(document.getElementById('vzText').value);
-  // var vxDis = Math.abs(vxText - vx);
-  // var vzDis = Math.abs(vzText - vz);
 
 	// 向左
 	if (code == 'left' ) {
@@ -172,41 +143,18 @@ function setSpeed(code) {
 	else if (code == 'backward') {
 		vx -= vx_increment;
 	}
-  //　向左前
-  else if (code == 'strafe_left') {
-		vx += vx_increment;
-    vz += vz_increment;
-	}
-  //　向右前
-  else if (code == 'strafe_right') {
-		vx += vx_increment;
-    vz -= vz_increment;
-	}
-  // else if (code == 'set') {
-  //   if (vxDis > vx_increment && vzDis > vz_increment) {
-  //     vx=(Math.abs(vx) + vx_increment)* Math.sign(vxText);
-  //     vz=(Math.abs(vz) + vz_increment)* Math.sign(vzText);
-  //   }
-  //   else if (Math.abs(vxDis) > vx_increment && Math.abs(vzDis) <= vz_increment) {
-  //     vx=(Math.abs(vx) + vx_increment)* Math.sign(vxText);
-  //     vz = vzText;
-  //   }
-  //   else if (Math.abs(vzDis) > vz_increment && Math.abs(vxDis) <= vx_increment) {
-  //     vz=(Math.abs(vz) + vz_increment)* Math.sign(vzText);
-  //     vx = vzText;
-  //   }
-  //   else if (Math.abs(vzDis) <= vz_increment && Math.abs(vxDis) <= vx_increment) {
-  //     vx = vxText;
-  //     vz = vzText;
-  //   }
+  // //　向左前
+  // else if (code == 'strafe_left') {
+	// 	vx += vx_increment;
+  //   vz += vz_increment;
 	// }
-  cmdPub();
-}
+  // //　向右前
+  // else if (code == 'strafe_right') {
+	// 	vx += vx_increment;
+  //   vz -= vz_increment;
+	// }
 
-// 定义最大值设置函数
-function setMax() {
-  vxmax = Math.min(Math.abs(document.getElementById('vxMaxText').value), 0.5);
-  vzmax = Math.min(Math.abs(document.getElementById('vzMaxText').value), 1.0);
+  cmdPub();
 }
 
 //定义停止函数
@@ -245,7 +193,7 @@ function startTimer(code1) {
   t1 = setInterval(function() {setSpeed(code1)}, 50);
 }
 
-// 定义计时器停止函数
+// 定义速度控制计时器停止函数
 function stopTimer() {
   clearInterval(t1);
   if (vx == 0 && vz == 0) {
