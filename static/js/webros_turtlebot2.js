@@ -73,6 +73,20 @@ function init() {
 
    directionShow();
 
+   // 创建地图窗口
+   var viewer = new ROS2D.Viewer({
+       divID: 'Nav',
+       width: 600,
+       height: 440
+   });
+   // 设置导航的客户端
+   var nav = NAV2D.OccupancyGridClientNav({
+       ros: rbServer,
+       rootObject: viewer.scene,
+       viewer: viewer,
+       serverName: '/move_base'
+   });
+
    }
 
 // 定义视频显示函数
