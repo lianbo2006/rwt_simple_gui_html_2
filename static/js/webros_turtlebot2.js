@@ -39,7 +39,7 @@ function init() {
 
    // 修改web_video_server相关参数
    //  src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/usb_cam/image_raw&quality=50&width=200&height=160";
-   src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/rgb/image_raw&quality=90&width=480&height=320";
+   src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/rgb/image_raw&quality=50&width=480&height=320";
    src_site2 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/depth/image_raw";
    src_site3 = "static/images/blackback.jpg";
    video_raw = document.getElementById("cam_raw");
@@ -74,13 +74,14 @@ function init() {
    directionShow();
 
    // 创建地图窗口
-   var viewer = new ROS2D.Viewer({
+      viewer = new ROS2D.Viewer({
        divID: 'Nav',
        width: 600,
        height: 440
    });
+
    // 设置导航的客户端
-   var nav = NAV2D.OccupancyGridClientNav({
+      nav = NAV2D.OccupancyGridClientNav({
        ros: rbServer,
        rootObject: viewer.scene,
        viewer: viewer,
@@ -88,6 +89,88 @@ function init() {
    });
 
    }
+
+   // 定义重初始化函数
+   function reinit() {
+     rbServer.close();
+
+     rbServer.on('close', function() {
+         console.log('Connection to websocket server closed.');
+      });
+
+      // 读取页面相关端口信息
+       rosbridgePort = document.getElementById('rosbridgePort').value;
+       videoPort = document.getElementById('videoPort').value;
+
+      // 读取服务的主机变量
+       rosbridgeHost  = document.getElementById('rosbridgeHost').value;
+       videoHost  = document.getElementById('videoHost').value;
+
+      // 修改rosbridge_server信息
+       rbServer = new ROSLIB.Ros({
+          url : 'ws://' + rosbridgeHost + ':' + rosbridgePort
+       });
+
+      // 连接rosbridge_server并返回信息进行显示
+       rbServer.on('connection', function() {
+          alert("websocket 服务器已连接");
+          console.log('Connected to websocket server.');
+      });
+       rbServer.on('error', function(error) {
+           alert("连接 websocket 服务器错误");
+           console.log('Error connecting to websocket server: ', error);
+       });
+       rbServer.on('close', function() {
+           alert("websocket 服务器已关闭");
+           console.log('Connection to websocket server closed.');
+        });
+
+      // 创建控制rostopic变量,设定主节点，消息名和消息类型
+      cmdVelTopic = new ROSLIB.Topic({
+          ros : rbServer,
+          name : '/cmd_vel_mux/input/teleop',
+          messageType : 'geometry_msgs/Twist'
+      })
+
+      // 创建速度rostopic变量,设定主节点，消息名和消息类型
+      velocity_listener = new ROSLIB.Topic({
+        ros : rbServer,
+        name : '/mobile_base/commands/velocity',
+        messageType : 'geometry_msgs/Twist'
+      })
+      velocity_listener.subscribe(function(message) {
+       // // 在浏览器的开发者栏监控速度信息
+       //  console.log('Received message on ' + velocity_listener.name + ': linear.x=' + message.linear.x);
+       //  console.log('Received message on ' + velocity_listener.name + ': angular.z= ' + message.angular.z);
+        var vxText = document.getElementById('vxText');
+        var vztext = document.getElementById('vzText');
+        //传给页面相应位置并且保留两位小数
+        vxText.value = message.linear.x.toFixed(2);
+        vztext.value = message.angular.z.toFixed(2);
+        //velocity_listener.unsubscribe();
+      })
+
+      directionShow();
+
+
+      // 设置导航的客户端
+      nav = NAV2D.OccupancyGridClientNav({
+          ros: rbServer,
+          rootObject: viewer.scene,
+          viewer: viewer,
+          serverName: '/move_base'
+      });
+
+      // 修改web_video_server相关参数
+      //  src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/usb_cam/image_raw&quality=50&width=200&height=160";
+      src_site1 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/rgb/image_raw&quality=50&width=480&height=320";
+      src_site2 = "http://" + videoHost + ":" + videoPort + "/stream?topic=/camera/depth/image_raw";
+      src_site3 = "static/images/blackback.jpg";
+      video_raw = document.getElementById("cam_raw");
+      vidShow='停止';
+      video_raw.src=src_site3;
+
+      }
 
 // 定义视频显示函数
 function playPause(){
