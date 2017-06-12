@@ -92,11 +92,8 @@ function init() {
 
    // 定义重初始化函数
    function reinit() {
-     rbServer.close();
-
-     rbServer.on('close', function() {
-         console.log('Connection to websocket server closed.');
-      });
+      // 断开先前的websocket的连接
+      rbServer.close();
 
       // 读取页面相关端口信息
        rosbridgePort = document.getElementById('rosbridgePort').value;
