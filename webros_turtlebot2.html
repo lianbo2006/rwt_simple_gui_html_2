@@ -9,7 +9,8 @@
   <script type="text/javascript" src="static/js/roslib.min.js"></script>
   <script type='text/javascript' src='static/js/easeljs.min.js' ></script>
   <script type='text/javascript' src='static/js/ros2d.min.js' ></script>
-  <script type='text/javascript' src='static/js/nav2d.min.js' ></script>
+  <!-- script type='text/javascript' src='static/js/nav2d.min.js' ></script -->
+  <script type='text/javascript' src='static/js/nav2d_plus.js' ></script>
   <script type="text/javascript" src="static/js/webros_turtlebot2.js"></script>
 
 </head>
@@ -103,13 +104,13 @@
             </div>
               <div class="fields">
                 <div class="field">
-                  <label>线速度X</label>
+                  <label>线速度X(m/s)</label>
                   <input id="vxText" name="vxText" type="text" value="0.00">
                 </div>
                 </div>
                 <div class="fields">
                 <div class="field">
-                  <label>角速度Z</label>
+                  <label>角速度Z(rad/s)</label>
                   <input id="vzText" name="vzText" type="text" value="0.00">
                 </div>
               </div>
@@ -165,6 +166,7 @@
 
   </div>
 </div>
-
+  <div id="sound1" class=""></div>
+  <div id="sound2" class=""></div>
 </body>
 </html>
