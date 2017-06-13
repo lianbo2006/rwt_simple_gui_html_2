@@ -106,7 +106,7 @@ NAV2D.Navigator = function(options) {
 
     // 出发语音播报
     sound  = document.getElementById('sound1');
-    audio1 = '<audio src="static/sounds/Departure.mp3" autoplay="autoplay"></audio>' ;
+    audio1 = '<audio autoplay="autoplay"><source src="static/sounds/Departure.ogg" type="audio/ogg"><source src="tatic/sounds/Departure.mp3" type="audio/mp3"></audio>' ;
     sound.innerHTML = audio1;
     console.log('我要出发了');
     // create a goal
@@ -141,7 +141,7 @@ NAV2D.Navigator = function(options) {
 
       // 结束语音播报
       sound  = document.getElementById('sound2');
-      audio2 = '<audio src="static/sounds/Arrival.mp3" autoplay="autoplay"></audio>' ;
+      audio2 = '<audio autoplay="autoplay"><source src="static/sounds/Arrival.ogg" type="audio/ogg"><source src="tatic/sounds/Arrival.mp3" type="audio/mp3"></audio>' ;
       sound.innerHTML = audio2;
       console.log('我到地方了')
       that.rootObject.removeChild(goalMarker);
