@@ -105,10 +105,11 @@ NAV2D.Navigator = function(options) {
   function sendGoal(pose) {
 
     // 出发语音播报
-    sound  = document.getElementById('sound1');
-    audio1 = '<audio autoplay="autoplay"><source src="static/sounds/Departure.ogg" type="audio/ogg"><source src="tatic/sounds/Departure.mp3" type="audio/mp3"></audio>' ;
-    sound.innerHTML = audio1;
-    console.log('我要出发了');
+    document.getElementById('sound_Departure').innerHTML = '<audio autoplay="autoplay"><source src="static/sounds/Departure.ogg" type="audio/ogg"><source src="tatic/sounds/Departure.mp3" type="audio/mp3"></audio>';
+    // sound_Departure  = document.getElementById('sound_Departure');
+    // audio_Departure = '<audio autoplay="autoplay"><source src="static/sounds/Departure.ogg" type="audio/ogg"><source src="tatic/sounds/Departure.mp3" type="audio/mp3"></audio>' ;
+    // sound_Departure.innerHTML = audio_Departure;
+    console.log('目标点已收到');
     // create a goal
     var goal = new ROSLIB.Goal({
       actionClient : actionClient,
@@ -140,10 +141,11 @@ NAV2D.Navigator = function(options) {
     goal.on('result', function() {
 
       // 结束语音播报
-      sound  = document.getElementById('sound2');
-      audio2 = '<audio autoplay="autoplay"><source src="static/sounds/Arrival.ogg" type="audio/ogg"><source src="tatic/sounds/Arrival.mp3" type="audio/mp3"></audio>' ;
-      sound.innerHTML = audio2;
-      console.log('我到地方了')
+      document.getElementById('sound_Arrival').innerHTML = '<audio autoplay="autoplay"><source src="static/sounds/Arrival.ogg" type="audio/ogg"><source src="tatic/sounds/Arrival.mp3" type="audio/mp3"></audio>';
+      // sound_Arrival  = document.getElementById('sound_Arrival');
+      // audio_Arrival = '<audio autoplay="autoplay"><source src="static/sounds/Arrival.ogg" type="audio/ogg"><source src="tatic/sounds/Arrival.mp3" type="audio/mp3"></audio>' ;
+      // sound_Arrival.innerHTML = audio_Arrival;
+      console.log('机器人已到达');
       that.rootObject.removeChild(goalMarker);
     });
   }
